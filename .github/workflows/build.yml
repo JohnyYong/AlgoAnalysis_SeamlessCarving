@@ -27,7 +27,7 @@ jobs:
 
       - name: Build SeamCarver
         run: |
-          g++ -std=c++17 main.cpp SeamCarver.cpp -o seamcarver $(pkg-config --cflags --libs opencv4)
+          g++ -std=c++17 -DVISUALISE main.cpp SeamCarver.cpp -o seamcarver $(pkg-config --cflags --libs opencv4)
 
       - name: Run sample image through seam carver
         run: |

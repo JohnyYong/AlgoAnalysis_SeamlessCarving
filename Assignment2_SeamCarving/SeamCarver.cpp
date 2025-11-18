@@ -418,8 +418,10 @@ void SeamCarver::resize(int targetWidth, int targetHeight)
             cv::Mat vis = image.clone();
             drawSeamOnImage(vis, seam, true);
 
+#ifndef VISUALISE
             cv::imshow("SeamCarving (Also Vertical Visualisation)", vis);
             cv::waitKey(1);
+#endif
 
             removeVerticalSeam(seam);
         }
@@ -431,9 +433,10 @@ void SeamCarver::resize(int targetWidth, int targetHeight)
             cv::Mat vis = image.clone();
             drawSeamOnImage(vis, seam, false);
 
+#ifndef VISUALISE
             cv::imshow("Horizontal", vis);
             cv::waitKey(1);
-
+#endif
             removeHorizontalSeam(seam);
         }
         else
@@ -447,9 +450,10 @@ void SeamCarver::resize(int targetWidth, int targetHeight)
             std::cout << "Progress: " << iteration << " seams removed. Current size: "
                 << image.cols << "x" << image.rows << std::endl;
         }
-
+#ifndef VISUALISE
         cv::imshow("SeamCarving", image);
         cv::waitKey(1);
+#endif
     }
 
     auto total_end = std::chrono::high_resolution_clock::now();
