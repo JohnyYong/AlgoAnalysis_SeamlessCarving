@@ -451,7 +451,7 @@ void SeamCarver::resize(int targetWidth, int targetHeight)
                 << image.cols << "x" << image.rows << std::endl;
         }
 #ifndef VISUALISE
-        cv::imshow("SeamCarving", image);
+        cv::imshow("SeamCarving (Also Vertical Visualisation)", image);
         cv::waitKey(1);
 #endif
     }
