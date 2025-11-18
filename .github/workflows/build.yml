@@ -46,10 +46,10 @@ jobs:
           if [ -f output.jpg ]; then cp output.jpg deliverable/; fi
           # README is probably in repo root, so go one level up to copy it
           if [ -f ../README.md ]; then cp ../README.md deliverable/; fi
-          zip -r seamcarver_package.zip deliverable/
+          zip -r SeamCarverFile.zip deliverable/
 
       - name: Upload packaged artifact
         uses: actions/upload-artifact@v4
         with:
-          name: seamcarver-package
-          path: Assignment2_SeamCarving/seamcarver_package.zip
+          name: SeamCarverFile
+          path: Assignment2_SeamCarving/SeamCarverFile.zip
