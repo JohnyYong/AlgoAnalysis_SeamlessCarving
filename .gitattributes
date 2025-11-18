@@ -1,1 +1,2 @@
 Lib/*.lib filter=lfs diff=lfs merge=lfs -text
+Bin/*.dll filter=lfs diff=lfs merge=lfs -text
