@@ -33,7 +33,7 @@ jobs:
         run: |
           if [ -f input.jpg ]; then
             echo "Processing input.jpg..."
-            ./seamcarver input.jpg output.jpg
+            ./seamcarver input.jpg 1000 800
           else
             echo "No input.jpg found in Assignment2_SeamCarving. Skipping sample generation."
           fi
