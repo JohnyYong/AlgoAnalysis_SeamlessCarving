@@ -1,6 +1,7 @@
 #pragma once
 #include "opencv2/opencv.hpp"
 #include <vector>
+#define SOLUTION
 
 class SeamCarver {
 private:

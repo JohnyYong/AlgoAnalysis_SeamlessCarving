@@ -1,0 +1,61 @@
+name: SeamCarver
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build SeamCarver
+    runs-on: ubuntu-latest
+
+    steps:
+      #Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      #Install OpenCV
+      - name: Install OpenCV
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopencv-dev pkg-config
+
+      #Build the project
+      - name: Build SeamCarver
+        run: |
+          g++ -std=c++17 main.cpp SeamCarver.cpp -o seamcarver $(pkg-config --cflags --libs opencv4)
+
+      #Run sample processing (CD)
+      #If input.jpg exists, generate output.jpg
+      - name: Run sample image through seam carver
+        run: |
+          if [ -f input.jpg ]; then
+            echo "Processing input.jpg..."
+            ./seamcarver input.jpg output.jpg
+          else
+            echo "No input.jpg found in repo root. Skipping sample generation."
+          fi
+
+      #Package deliverables
+      - name: Package deliverables
+        run: |
+          mkdir deliverable
+          cp seamcarver deliverable/
+
+          # Include input sample if exists
+          if [ -f input.jpg ]; then cp input.jpg deliverable/; fi
+
+          # Include CI-generated output sample
+          if [ -f output.jpg ]; then cp output.jpg deliverable/; fi
+
+          # Include README if exists
+          if [ -f README.md ]; then cp README.md deliverable/; fi
+
+          zip -r seamcarver_package.zip deliverable/
+
+      #Upload ZIP artifact
+      - name: Upload packaged artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: seamcarver-package
+          path: seamcarver_package.zip

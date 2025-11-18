@@ -2,6 +2,7 @@
 #include "SeamCarver.h"
 #include <iostream>
 
+#ifdef SOLUTION
 int main() {
     // Suppress INFO warnings
     cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_WARNING);
@@ -39,3 +40,4 @@ int main() {
 
     return 0;
 }
+#endif // SOLUTION
