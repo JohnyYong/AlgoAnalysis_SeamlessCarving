@@ -143,6 +143,8 @@ std::vector<int> SeamCarver::findVerticalSeam(const cv::Mat& energy)
 {
     auto start = std::chrono::high_resolution_clock::now();
 
+#ifdef USE_DP
+    // -------------------- DYNAMIC PROGRAMMING VERSION --------------------
     const int rows = energy.rows;
     const int cols = energy.cols;
 
@@ -214,6 +216,38 @@ std::vector<int> SeamCarver::findVerticalSeam(const cv::Mat& energy)
         int p = parent[idx(y, x)];
         x = p;
     }
+#else
+    // -------------------- GREEDY VERSION --------------------
+    const int rows = energy.rows;
+    const int cols = energy.cols;
+
+    std::vector<int> seam(rows);
+
+    // Start at MIN value in first row
+    double minVal;
+    cv::Point minLoc;
+    cv::minMaxLoc(energy.row(0), &minVal, nullptr, &minLoc, nullptr);
+    int x = minLoc.x;
+    seam[0] = x;
+
+    // For each row, choose the smallest-energy neighbor
+    for (int y = 1; y < rows; ++y) {
+        int bestX = x;
+        float bestVal = energy.at<float>(y, x);
+
+        if (x > 0 && energy.at<float>(y, x - 1) < bestVal) {
+            bestVal = energy.at<float>(y, x - 1);
+            bestX = x - 1;
+        }
+        if (x + 1 < cols && energy.at<float>(y, x + 1) < bestVal) {
+            bestVal = energy.at<float>(y, x + 1);
+            bestX = x + 1;
+        }
+
+        x = bestX;
+        seam[y] = x;
+    }
+#endif // USE_DP
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
@@ -227,6 +261,8 @@ std::vector<int> SeamCarver::findHorizontalSeam(const cv::Mat& energy)
 {
     auto start = std::chrono::high_resolution_clock::now();
 
+#ifdef USE_DP
+    // -------------------- DYNAMIC PROGRAMMING VERSION --------------------
     const int rows = energy.rows;
     const int cols = energy.cols;
 
@@ -293,6 +329,37 @@ std::vector<int> SeamCarver::findHorizontalSeam(const cv::Mat& energy)
         int p = parent[idx(y, x)];
         y = p;
     }
+#else
+    // -------------------- GREEDY VERSION --------------------
+    const int rows = energy.rows;
+    const int cols = energy.cols;
+
+    std::vector<int> seam(cols);
+
+    // Start at min value in first column
+    double minVal;
+    cv::Point minLoc;
+    cv::minMaxLoc(energy.col(0), &minVal, nullptr, &minLoc, nullptr);
+    int y = minLoc.y;
+    seam[0] = y;
+
+    for (int x = 1; x < cols; ++x) {
+        int bestY = y;
+        float bestVal = energy.at<float>(y, x);
+
+        if (y > 0 && energy.at<float>(y - 1, x) < bestVal) {
+            bestVal = energy.at<float>(y - 1, x);
+            bestY = y - 1;
+        }
+        if (y + 1 < rows && energy.at<float>(y + 1, x) < bestVal) {
+            bestVal = energy.at<float>(y + 1, x);
+            bestY = y + 1;
+        }
+
+        y = bestY;
+        seam[x] = y;
+    }
+#endif // USE_DP
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;

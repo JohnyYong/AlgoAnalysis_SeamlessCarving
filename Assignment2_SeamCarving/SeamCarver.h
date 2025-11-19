@@ -2,6 +2,7 @@
 #include "opencv2/opencv.hpp"
 #include <vector>
 #define SOLUTION
+//#define USE_DP // Use dynamic programming for seam finding by default, otherwise use greedy approach
 
 class SeamCarver {
 private:
