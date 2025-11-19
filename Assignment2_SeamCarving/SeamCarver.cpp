@@ -156,11 +156,11 @@ cv::Mat SeamCarver::computeEnergyMap()
 
 /**
  * @brief Finds a vertical seam of minimum energy.
-* A vertical seam is one pixel per row, connected from top to bottom.
-*
-* @param energy Pre-computed energy map of the image.
-* @return Vector of x-coordinates for each row indicating the seam position.
-*/
+ * A vertical seam is one pixel per row, connected from top to bottom.
+ *
+ * @param energy Pre-computed energy map of the image.
+ * @return Vector of x-coordinates for each row indicating the seam position.
+ */
 std::vector<int> SeamCarver::findVerticalSeam(const cv::Mat& energy)
 {
     auto start = std::chrono::high_resolution_clock::now();
