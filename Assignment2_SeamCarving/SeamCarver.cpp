@@ -7,7 +7,7 @@
 
 #ifdef SOLUTION
 
-//Time Variables 
+// Anonymous namespace to store timing variables
 namespace {
     double total_energy_time = 0.0;
     double total_vertical_seam_time = 0.0;
@@ -21,7 +21,9 @@ namespace {
     int horizontal_remove_calls = 0;
 }
 
-//Function to print timing results
+/**
+ * @brief Prints all accumulated timing results for debugging/performance analysis.
+ */
 void printTimingResults() {
     std::cout << "\n===TimeTest===" << std::endl;
     std::cout << "Energy Calculation:" << std::endl;
@@ -54,6 +56,14 @@ void printTimingResults() {
     std::cout << "\nTOTAL PROCESSING TIME: " << total_processing_time << "s" << std::endl;
 }
 
+/**
+ * @brief Draws seam onto an image for visualization.
+ * Marks each pixel of the seam in red (BGR: 0, 0, 255).
+ *
+ * @param img      Image to draw into (modified in-place).
+ * @param seam     List of coordinates representing the seam.
+ * @param vertical True if this is a vertical seam, false if horizontal.
+ */
 static void drawSeamOnImage(cv::Mat& img, const std::vector<int>& seam, bool vertical)
 {
     //Color for the visualisation
@@ -61,7 +71,7 @@ static void drawSeamOnImage(cv::Mat& img, const std::vector<int>& seam, bool ver
 
     if (vertical)
     {
-
+        // seam[y] gives x-coordinate for that row
         int rows = img.rows;
         int cols = img.cols;
         for (int y = 0; y < rows && y < (int)seam.size(); ++y)
@@ -80,7 +90,7 @@ static void drawSeamOnImage(cv::Mat& img, const std::vector<int>& seam, bool ver
     }
     else //For horizontal seam
     {
-       
+        // seam[x] gives y-coordinate for that column
         int rows = img.rows;
         int cols = img.cols;
         for (int x = 0; x < cols && x < (int)seam.size(); ++x)
@@ -98,7 +108,9 @@ static void drawSeamOnImage(cv::Mat& img, const std::vector<int>& seam, bool ver
     }
 }
 
-// Reset timing counters
+/**
+ * @brief Resets all timing counters before a new resize operation.
+ */
 void resetTiming() {
     total_energy_time = 0.0;
     total_vertical_seam_time = 0.0;
@@ -112,6 +124,10 @@ void resetTiming() {
     horizontal_remove_calls = 0;
 }
 
+/**
+ * @brief Computes the energy map of the current image.
+ * @return A single-channel floating-point matrix representing per-pixel energy.
+ */
 cv::Mat SeamCarver::computeEnergyMap()
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -138,7 +154,13 @@ cv::Mat SeamCarver::computeEnergyMap()
     return energy;
 }
 
-// Find minimum vertical seam
+/**
+ * @brief Finds a vertical seam of minimum energy.
+* A vertical seam is one pixel per row, connected from top to bottom.
+*
+* @param energy Pre-computed energy map of the image.
+* @return Vector of x-coordinates for each row indicating the seam position.
+*/
 std::vector<int> SeamCarver::findVerticalSeam(const cv::Mat& energy)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -257,6 +279,13 @@ std::vector<int> SeamCarver::findVerticalSeam(const cv::Mat& energy)
     return seam;
 }
 
+/**
+ * @brief Finds a horizontal seam of minimum energy.
+ * A horizontal seam is one pixel per column, connected left to right.
+ *
+ * @param energy Pre-computed energy map.
+ * @return Vector of y-coordinates for each column indicating the seam position.
+ */
 std::vector<int> SeamCarver::findHorizontalSeam(const cv::Mat& energy)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -369,6 +398,13 @@ std::vector<int> SeamCarver::findHorizontalSeam(const cv::Mat& energy)
     return seam;
 }
 
+/**
+ * @brief Removes a vertical seam from the image.
+ * Given a seam specifying one column index per row, this function shifts the
+ * remaining pixels left and reduces the image width by one.
+ *
+ * @param seam Vector of x-coordinates specifying the seam path.
+ */
 void SeamCarver::removeVerticalSeam(const std::vector<int>& seam)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -401,6 +437,13 @@ void SeamCarver::removeVerticalSeam(const std::vector<int>& seam)
     vertical_remove_calls++;
 }
 
+/**
+ * @brief Removes a horizontal seam from the image.
+ * Given a seam specifying one row index per column, this function shifts remaining
+ * pixels upward and reduces the image height by one.
+ *
+ * @param seam Vector of y-coordinates specifying the seam path.
+ */
 void SeamCarver::removeHorizontalSeam(const std::vector<int>& seam)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -433,6 +476,12 @@ void SeamCarver::removeHorizontalSeam(const std::vector<int>& seam)
     horizontal_remove_calls++;
 }
 
+/**
+ * @brief Resizes the image to a target width and height using seam carving.
+ *
+ * @param targetWidth  The desired final width of the image.
+ * @param targetHeight The desired final height of the image.
+ */
 void SeamCarver::resize(int targetWidth, int targetHeight)
 {
     // Reset timing at the start of each resize operation
